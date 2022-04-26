@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <string>
+#include "VectorHelper.h"
 
 // The main() Function - entry point for our program
 int main()
@@ -148,6 +149,60 @@ int main()
 		grenadeVelocity += gravity * frameTime.asSeconds(); // Increase downward velocity based on gravity
 		grenadeSprite.setPosition(grenadeSprite.getPosition() + grenadeVelocity * frameTime.asSeconds());
 
+		// Check for collision with crates for ricochet
+		for (int i = 0; i < crateSprites.size(); ++i)
+		{
+			sf::FloatRect crateRect = crateSprites[i].getGlobalBounds();
+			sf::FloatRect grenadeRect = grenadeSprite.getGlobalBounds();
+			if (crateRect.intersects(grenadeRect))
+			{
+				// Ricochet!
+
+				// Find the side of collision using collision depth
+				sf::Vector2f depth = CollisionDepth(grenadeRect, crateRect);
+				sf::Vector2f absDepth = sf::Vector2f(abs(depth.x), abs(depth.y));
+				sf::Vector2f normal;
+				if (absDepth.x < absDepth.y) // collided on the x direction
+				{
+					// Move out of the collision
+					sf::Vector2f grenadePos = grenadeSprite.getPosition();
+					grenadePos.x += depth.x;
+					grenadeSprite.setPosition(grenadePos);
+
+					if (depth.x > 0) // colliding from the left
+					{
+						normal = sf::Vector2f(-1, 0);
+					}
+					else // colliding from the right
+					{
+						normal = sf::Vector2f(1, 0);
+					}
+				}
+				else // collided in y direction
+				{
+					// Move out of the collision
+					sf::Vector2f grenadePos = grenadeSprite.getPosition();
+					grenadePos.y += depth.y;
+					grenadeSprite.setPosition(grenadePos);
+
+					if (depth.y > 0) // colliding from the top
+					{
+						normal = sf::Vector2f(0, -1);
+					}
+					else // colliding from the bottom
+					{
+						normal = sf::Vector2f(0, 1);
+					}
+				}
+
+				// Apply the reflection equation
+				// R = I - 2N (I * N)
+				// I = incoming (use -velocity)
+				// N = normal (use normal)
+				grenadeVelocity = grenadeVelocity - 2.0f * normal * (VectorDot(grenadeVelocity, normal));
+
+			}
+		}
 
 
 		// -----------------------------------------------
