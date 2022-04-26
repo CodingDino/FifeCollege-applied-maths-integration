@@ -45,6 +45,14 @@ int main()
 	sf::Vector2f playerVelocity(0.0f, 0.0f);
 	float playerSpeed = 100.0f;
 
+	// Grenade
+	sf::Texture grenadeTexture;
+	grenadeTexture.loadFromFile("Assets/grenade.png");
+	sf::Sprite grenadeSprite;
+	grenadeSprite.setTexture(grenadeTexture);
+	sf::Vector2f grenadeVelocity(0.0f, 0.0f);
+
+
 	// Game Loop
 	while (gameWindow.isOpen())
 	{
@@ -85,6 +93,12 @@ int main()
 			// Move player right
 			playerVelocity.x = playerSpeed;
 		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+		{
+			// Fire ze missiles!
+			grenadeSprite.setPosition(firingPosition);
+			grenadeVelocity = firingVelocity;
+		}
 
 
 		// -----------------------------------------------
@@ -96,6 +110,7 @@ int main()
 		// Move our player based on the time passed and their current velocity
 		// This uses the equation:   s2 = s1 + v * t
 		playerSprite.setPosition(playerSprite.getPosition() + playerVelocity * frameTime.asSeconds());
+
 
 		// Update projectile prediction values
 		firingPosition = playerSprite.getPosition();
@@ -118,6 +133,10 @@ int main()
 			pipSprites[i].setPosition(pipPosition);
 		}
 
+		// Update Grenade Position
+		grenadeVelocity += gravity * frameTime.asSeconds(); // Increase downward velocity based on gravity
+		grenadeSprite.setPosition(grenadeSprite.getPosition() + grenadeVelocity * frameTime.asSeconds());
+
 
 
 		// -----------------------------------------------
@@ -132,6 +151,9 @@ int main()
 		{
 			gameWindow.draw(pipSprites[i]);
 		}
+
+		// Draw grenade
+		gameWindow.draw(grenadeSprite);
 
 		// Display the window contents on the screen
 		gameWindow.display();
