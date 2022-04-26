@@ -52,6 +52,17 @@ int main()
 	grenadeSprite.setTexture(grenadeTexture);
 	sf::Vector2f grenadeVelocity(0.0f, 0.0f);
 
+	// Crates
+	sf::Texture crateTexture;
+	crateTexture.loadFromFile("Assets/crate.png");
+	const int NUM_CRATES = 30;
+	std::vector<sf::Sprite> crateSprites;
+	for (int i = 0; i < NUM_CRATES; ++i)
+	{
+		crateSprites.push_back(sf::Sprite());
+		crateSprites[i].setTexture(crateTexture);
+		crateSprites[i].setPosition(i * 28, 500);
+	}
 
 	// Game Loop
 	while (gameWindow.isOpen())
@@ -150,6 +161,10 @@ int main()
 		for (int i = 0; i < NUM_PIPS; ++i)
 		{
 			gameWindow.draw(pipSprites[i]);
+		}
+		for (int i = 0; i < crateSprites.size(); ++i)
+		{
+			gameWindow.draw(crateSprites[i]);
 		}
 
 		// Draw grenade
