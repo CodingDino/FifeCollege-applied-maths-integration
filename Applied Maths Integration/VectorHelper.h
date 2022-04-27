@@ -13,3 +13,7 @@ sf::Vector3f VectorNormalize(sf::Vector3f a);
 float VectorDot(sf::Vector2f a, sf::Vector2f b);
 
 float VectorDot(sf::Vector3f a, sf::Vector3f b);
+
+sf::Vector3f VectorCross(sf::Vector3f a, sf::Vector3f b);
+
+sf::Vector2f CollisionDepth(sf::FloatRect a, sf::FloatRect b);
